@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>書右 IG 系統｜架構總覽（2026-05-05）</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Source Sans 3", "Noto Serif TC", -apple-system, sans-serif;
+    background: #F9F8F4;
+    color: #2D3A31;
+    line-height: 1.7;
+    font-size: 20px;
+  }
+  body::after {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+    background-image: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%3E%3Cfilter%20id%3D%22g%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.85%22%20numOctaves%3D%224%22%20stitchTiles%3D%22stitch%22%2F%3E%3CfeColorMatrix%20type%3D%22saturate%22%20values%3D%220%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20filter%3D%22url(%23g)%22%20opacity%3D%220.04%22%2F%3E%3C%2Fsvg%3E');
+  }
+
+  /* ======= Hero ======= */
+  .hero { padding: 70px 32px 60px; text-align: center; background: #2D3A31; color: #F9F8F4; }
+  .hero .badge { display: inline-block; padding: 6px 18px; background: rgba(244,232,105,0.15); color: #F4E869; border: 1px solid rgba(244,232,105,0.4); border-radius: 999px; font-size: 16px; font-weight: 600; letter-spacing: 4px; margin-bottom: 24px; }
+  .hero h1 { font-family: "Playfair Display", "Noto Serif TC", serif; font-size: 60px; font-weight: 700; line-height: 1.2; }
+  .hero h1 em { font-style: normal; color: #F4E869; }
+  .hero .updated { font-size: 18px; color: rgba(249,248,244,0.6); margin-top: 18px; letter-spacing: 2px; }
+
+  /* ======= Section 共用 ======= */
+  .section { padding: 70px 32px; max-width: 1320px; margin: 0 auto; }
+  .section h2 { font-family: "Playfair Display", "Noto Serif TC", serif; font-size: 44px; font-weight: 700; line-height: 1.2; margin-bottom: 14px; color: #2D3A31; }
+  .section h2 em { font-style: normal; color: #8C9A84; }
+  .section .lead { font-size: 22px; color: #5A6B5F; max-width: 900px; line-height: 1.65; margin-bottom: 40px; }
+  .section .eyebrow { display: inline-block; font-family: "Playfair Display", serif; font-size: 16px; font-weight: 600; letter-spacing: 5px; color: #8C9A84; text-transform: uppercase; margin-bottom: 14px; }
+
+  /* ======= 數字概覽（Hero 下方）======= */
+  .quick-stats { background: #fff; border-bottom: 1px solid #E8E4DC; }
+  .quick-stats .grid { max-width: 1320px; margin: 0 auto; padding: 40px 32px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 24px; }
+  .quick-stats .stat { text-align: center; }
+  .quick-stats .stat .num { font-family: "Playfair Display", serif; font-size: 56px; font-weight: 800; color: #3D5A46; line-height: 1; }
+  .quick-stats .stat .label { font-size: 16px; color: #5A6B5F; margin-top: 10px; letter-spacing: 1px; }
+
+  /* ======= 5AM 流程圖 ======= */
+  .flow-bg { background: #2D3A31; color: #F9F8F4; }
+  .flow-bg h2 { color: #F9F8F4; }
+  .flow-bg h2 em { color: #F4E869; }
+  .flow-bg .lead { color: rgba(249,248,244,0.7); }
+  .flow-bg .eyebrow { color: #F4E869; }
+  .pipeline { display: flex; gap: 16px; align-items: stretch; flex-wrap: wrap; }
+  .pipe-step { flex: 1; min-width: 180px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 22px 18px; }
+  .pipe-step .stp { font-family: "Playfair Display", serif; font-size: 32px; color: #F4E869; font-weight: 700; line-height: 1; }
+  .pipe-step h4 { font-family: "Noto Serif TC", serif; font-size: 22px; font-weight: 700; margin-top: 10px; margin-bottom: 8px; }
+  .pipe-step p { font-size: 17px; color: rgba(249,248,244,0.78); line-height: 1.55; }
+
+  /* ======= 主軸比例 bar ======= */
+  .axis-list { display: grid; gap: 18px; margin-top: 30px; }
+  .axis-row { background: #fff; border: 1px solid #E8E4DC; border-radius: 16px; padding: 24px 28px; }
+  .axis-row .top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; flex-wrap: wrap; gap: 12px; }
+  .axis-row .left { display: flex; align-items: baseline; gap: 14px; }
+  .axis-row .code { font-family: "Playfair Display", serif; font-size: 36px; font-weight: 800; color: #3D5A46; line-height: 1; min-width: 36px; }
+  .axis-row .name { font-family: "Noto Serif TC", serif; font-size: 24px; font-weight: 700; }
+  .axis-row .right { display: flex; gap: 18px; align-items: baseline; }
+  .axis-row .pct { font-family: "Playfair Display", serif; font-size: 32px; font-weight: 700; color: #2D3A31; }
+  .axis-row .quota { font-size: 17px; color: #8C9A84; letter-spacing: 1px; }
+  .axis-row .seed { font-size: 17px; color: #8C9A84; letter-spacing: 1px; }
+  .axis-row .bar-track { height: 14px; background: #FAF6F0; border-radius: 7px; overflow: hidden; margin-top: 12px; }
+  .axis-row .bar-fill { height: 100%; background: linear-gradient(90deg, #2D3A31 0%, #8C9A84 100%); }
+  .axis-row .desc { font-size: 18px; color: #5A6B5F; margin-top: 14px; line-height: 1.6; }
+
+  /* ======= 副軸 ======= */
+  .sub-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 30px; }
+  .sub-card { background: #fff; border: 1px solid #E8E4DC; border-radius: 16px; padding: 24px; text-align: center; }
+  .sub-card .code { font-family: "Playfair Display", serif; font-size: 38px; font-weight: 800; color: #3D5A46; }
+  .sub-card .pct { font-family: "Playfair Display", serif; font-size: 22px; color: #8C9A84; margin-top: 6px; }
+  .sub-card .name { font-family: "Noto Serif TC", serif; font-size: 22px; font-weight: 700; margin-top: 12px; }
+  .sub-card .ex { font-size: 16px; color: #5A6B5F; margin-top: 8px; line-height: 1.5; }
+
+  /* ======= 8 版型 ======= */
+  .tpl-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin-top: 30px; }
+  .tpl-card { display: flex; gap: 24px; background: #fff; border: 1px solid #E8E4DC; border-radius: 18px; padding: 24px; }
+  .tpl-color { width: 110px; height: 140px; border-radius: 12px; flex-shrink: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+  .tpl-G1 { background: linear-gradient(135deg, #001D3D, #2A9D8F); }
+  .tpl-G2 { background: linear-gradient(135deg, #1A1A2E, #FF006E); }
+  .tpl-G3 { background: linear-gradient(135deg, #2D0808, #FF6B35); }
+  .tpl-G4 { background: linear-gradient(135deg, #2C3E50, #BDC3C7); }
+  .tpl-G5 { background: linear-gradient(135deg, #1A0033, #8B2FBE); }
+  .tpl-G6 { background: linear-gradient(135deg, #1B3A1B, #8FBC8F); }
+  .tpl-G7 { background: linear-gradient(135deg, #3E1F47, #E5B4A0); }
+  .tpl-G8 { background: linear-gradient(135deg, #0A1929, #1976D2); }
+  .tpl-info { flex: 1; min-width: 0; }
+  .tpl-id { font-family: "Playfair Display", serif; font-size: 14px; color: #8C9A84; letter-spacing: 2px; }
+  .tpl-name { font-family: "Noto Serif TC", serif; font-size: 24px; font-weight: 700; color: #2D3A31; margin: 6px 0 10px; }
+  .tpl-feat { font-size: 17px; color: #5A6B5F; line-height: 1.55; }
+  .tpl-day { display: inline-block; margin-top: 10px; padding: 3px 12px; background: #FAF6F0; border: 1px solid #E0D6C8; color: #6B7D63; border-radius: 999px; font-size: 14px; font-weight: 600; letter-spacing: 1px; }
+
+  /* ======= 9 業務員 ======= */
+  .members-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 30px; }
+  .member-card { background: #fff; border: 1px solid #E8E4DC; border-radius: 16px; padding: 22px; text-align: center; }
+  .member-card .photo { width: 100%; aspect-ratio: 3/4; background: #FAF6F0; border-radius: 12px; overflow: hidden; margin-bottom: 14px; }
+  .member-card .photo img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(0.2); }
+  .member-card .name { font-family: "Noto Serif TC", serif; font-size: 22px; font-weight: 700; }
+  .member-card .role { font-size: 15px; color: #8C9A84; letter-spacing: 1px; margin-top: 4px; }
+  .member-card .point { font-size: 16px; color: #5A6B5F; margin-top: 10px; line-height: 1.5; }
+
+  /* ======= 撈題演算法 ======= */
+  .algo-bg { background: #fff; border-top: 1px solid #E8E4DC; border-bottom: 1px solid #E8E4DC; }
+  .algo-flow { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 30px; }
+  .algo-card { background: #FAF6F0; border: 1px solid #E0D6C8; border-radius: 16px; padding: 28px; }
+  .algo-card h4 { font-family: "Noto Serif TC", serif; font-size: 24px; font-weight: 700; margin-bottom: 14px; color: #2D3A31; }
+  .algo-card ol { padding-left: 24px; }
+  .algo-card li { font-size: 18px; color: #5A6B5F; line-height: 1.7; margin-bottom: 10px; }
+  .algo-card code { background: #fff; border: 1px solid #E0D6C8; padding: 2px 8px; border-radius: 4px; font-family: "Source Code Pro", monospace; font-size: 16px; color: #3D5A46; }
+
+  /* ======= 系統規格 ======= */
+  .specs { background: #2D3A31; color: #F9F8F4; }
+  .specs h2 { color: #F9F8F4; }
+  .specs h2 em { color: #F4E869; }
+  .specs .lead { color: rgba(249,248,244,0.7); }
+  .specs .eyebrow { color: #F4E869; }
+  .spec-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 30px; }
+  .spec-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 24px; text-align: center; }
+  .spec-card .num { font-family: "Playfair Display", serif; font-size: 48px; font-weight: 800; color: #F4E869; line-height: 1; }
+  .spec-card .label { font-size: 16px; color: rgba(249,248,244,0.78); margin-top: 12px; letter-spacing: 2px; }
+
+  /* ======= 連結 / Footer ======= */
+  footer { background: #2D3A31; color: rgba(249,248,244,0.6); padding: 48px 32px; text-align: center; border-top: 1px solid #1a2520; }
+  footer .docs { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 18px; }
+  footer .docs a { color: #F4E869; font-size: 17px; text-decoration: none; border-bottom: 1px dashed rgba(244,232,105,0.5); padding-bottom: 3px; }
+  footer .small { font-size: 15px; }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 38px; }
+    .quick-stats .grid { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .quick-stats .stat .num { font-size: 38px; }
+    .section { padding: 50px 20px; }
+    .section h2 { font-size: 30px; }
+    .section .lead { font-size: 18px; }
+    .pipeline { flex-direction: column; }
+    .sub-grid { grid-template-columns: repeat(2, 1fr); }
+    .tpl-grid { grid-template-columns: 1fr; }
+    .members-grid { grid-template-columns: 1fr 1fr; }
+    .algo-flow { grid-template-columns: 1fr; }
+    .spec-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Hero ===== -->
+<section class="hero">
+  <div class="badge">SHUYOU LIN · ARCHITECTURE OVERVIEW</div>
+  <h1>書右 IG 系統<br><em>架構總覽</em></h1>
+  <div class="updated">UPDATED · 2026-05-05</div>
+</section>
+
+<!-- ===== 數字概覽 ===== -->
+<section class="quick-stats">
+  <div class="grid">
+    <div class="stat"><div class="num">6</div><div class="label">主軸</div></div>
+    <div class="stat"><div class="num">4</div><div class="label">副軸</div></div>
+    <div class="stat"><div class="num">8</div><div class="label">版型</div></div>
+    <div class="stat"><div class="num">9</div><div class="label">業務員 case</div></div>
+    <div class="stat"><div class="num">72</div><div class="label">靈感庫 seed</div></div>
+    <div class="stat"><div class="num">127</div><div class="label">n8n 節點</div></div>
+  </div>
+</section>
+
+<!-- ===== 5AM 流程 ===== -->
+<section class="section flow-bg">
+  <div class="eyebrow">DAILY PIPELINE</div>
+  <h2>每天 5AM 自動跑的<br><em>5 個步驟</em></h2>
+  <div class="lead">每天清晨 5 點自動觸發，從靈感庫挑題到 Discord 推送草稿，全程不用你介入。</div>
+  <div class="pipeline">
+    <div class="pipe-step"><div class="stp">01</div><h4>撈題</h4><p>從靈感庫雙軸演算法挑「最欠的軸」+「最久沒用的 seed」</p></div>
+    <div class="pipe-step"><div class="stp">02</div><h4>AI 寫文</h4><p>Sonnet 4.6 用 9 欄位 + source_essence 寫 caption + 33 slot</p></div>
+    <div class="pipe-step"><div class="stp">03</div><h4>抓圖</h4><p>Pexels API 抓 7 張情境圖（F 軸時 S1 用業務員 hero shot）</p></div>
+    <div class="pipe-step"><div class="stp">04</div><h4>合規</h4><p>3 層審查（systemMsg + 45 條規則 + Haiku 語意）</p></div>
+    <div class="pipe-step"><div class="stp">05</div><h4>推 Discord</h4><p>「高慶｜IG審核」頻道收到草稿連結，點進去三選一</p></div>
+  </div>
+</section>
+
+<!-- ===== 主軸 ===== -->
+<section class="section">
+  <div class="eyebrow">MAIN AXIS · 6 TYPES</div>
+  <h2>6 個主軸<br><em>每月配額 30 篇</em></h2>
+  <div class="lead">每天 5AM 撈題會根據月度配額挑「赤字最大的軸」優先發。72 條 seed 在 6 個主軸間循環使用、永不消耗。</div>
+
+  <div class="axis-list">
+
+    <div class="axis-row">
+      <div class="top">
+        <div class="left"><div class="code">A</div><div class="name">工作四面向（招募痛點）</div></div>
+        <div class="right">
+          <div class="pct">45%</div>
+          <div class="quota">月 13 篇</div>
+          <div class="seed">24 條 seed</div>
+        </div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:45%"></div></div>
+      <div class="desc">A1 薪資 / A2 成長 / A3 時間 / A4 未來感。源自招募教材 PDF，講工作痛點引導觀眾想換軌。</div>
+    </div>
+
+    <div class="axis-row">
+      <div class="top">
+        <div class="left"><div class="code">B</div><div class="name">業務揭密（招募反問）</div></div>
+        <div class="right">
+          <div class="pct">15%</div>
+          <div class="quota">月 5 篇</div>
+          <div class="seed">8 條 seed</div>
+        </div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:15%"></div></div>
+      <div class="desc">B1 拒絕 / B2 業內 / B3 迷思。解答觀眾對業務工作的疑問，降低拒絕感。</div>
+    </div>
+
+    <div class="axis-row">
+      <div class="top">
+        <div class="left"><div class="code">C</div><div class="name">我的故事（書右真實）</div></div>
+        <div class="right">
+          <div class="pct">10%</div>
+          <div class="quota">月 3 篇</div>
+          <div class="seed">14 條 seed</div>
+        </div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:10%"></div></div>
+      <div class="desc">C1 轉變 / C2 家庭 / C3 觀念。書右本人從鐵工廠 → 25 歲買房 → 100 人團隊的真實故事。</div>
+    </div>
+
+    <div class="axis-row">
+      <div class="top">
+        <div class="left"><div class="code">D</div><div class="name">理財觀念</div></div>
+        <div class="right">
+          <div class="pct">15%</div>
+          <div class="quota">月 5 篇</div>
+          <div class="seed">7 條 seed</div>
+        </div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:15%"></div></div>
+      <div class="desc">D1 現金流 / D2 保險 / D3 退休。通膨、複利、保險迷思、退休規劃等公開知識內容。</div>
+    </div>
+
+    <div class="axis-row">
+      <div class="top">
+        <div class="left"><div class="code">E</div><div class="name">名人名言</div></div>
+        <div class="right">
+          <div class="pct">10%</div>
+          <div class="quota">月 3 篇</div>
+          <div class="seed">6 條 seed</div>
+        </div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:10%"></div></div>
+      <div class="desc">E1 商業 / E2 人生。巴菲特、稻盛和夫、Jim Rohn、Goethe 等經典金句加書右解讀。</div>
+    </div>
+
+    <div class="axis-row">
+      <div class="top">
+        <div class="left"><div class="code">F</div><div class="name">團隊 case（9 位真實業務員）</div></div>
+        <div class="right">
+          <div class="pct">15%</div>
+          <div class="quota">月 5 篇</div>
+          <div class="seed">13 條 seed</div>
+        </div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:15%"></div></div>
+      <div class="desc">F1 業務員真實故事。9 位團隊成員真實 case + hero shot 本人照片，書右第一人稱「我帶過的 XXX」。</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== 副軸 ===== -->
+<section class="section">
+  <div class="eyebrow">SUB AXIS · 4 STYLES</div>
+  <h2>4 個副軸 <em>決定怎麼講</em></h2>
+  <div class="lead">主軸決定講什麼，副軸決定文案的呈現結構。雙軸演算法會同時看主軸赤字 + 副軸赤字配比。</div>
+  <div class="sub-grid">
+    <div class="sub-card">
+      <div class="code">F1</div>
+      <div class="pct">35%</div>
+      <div class="name">痛點共鳴</div>
+      <div class="ex">「你有沒有發現…」</div>
+    </div>
+    <div class="sub-card">
+      <div class="code">F2</div>
+      <div class="pct">30%</div>
+      <div class="name">教學乾貨</div>
+      <div class="ex">「3 個…」「5 種…」</div>
+    </div>
+    <div class="sub-card">
+      <div class="code">F3</div>
+      <div class="pct">25%</div>
+      <div class="name">故事敘事</div>
+      <div class="ex">「我團隊有個 32 歲…」</div>
+    </div>
+    <div class="sub-card">
+      <div class="code">F4</div>
+      <div class="pct">10%</div>
+      <div class="name">觀念翻轉</div>
+      <div class="ex">「以為 X 其實 Y」</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 8 版型 ===== -->
+<section class="section">
+  <div class="eyebrow">TEMPLATES · 8 ROTATING</div>
+  <h2>8 個版型<br><em>每天輪一個，8 天循環</em></h2>
+  <div class="lead">根據 dayOfYear ÷ 8 決定今天用哪個版型。每個有獨特 duotone 色感與主特色 slide。</div>
+  <div class="tpl-grid">
+    <div class="tpl-card"><div class="tpl-color tpl-G1"></div><div class="tpl-info"><div class="tpl-id">image_G1</div><div class="tpl-name">翠藍濾鏡</div><div class="tpl-feat">深藍 → 翠綠濾鏡，基底版型</div><div class="tpl-day">Day % 8 = 0</div></div></div>
+    <div class="tpl-card"><div class="tpl-color tpl-G2"></div><div class="tpl-info"><div class="tpl-id">image_G2</div><div class="tpl-name">暗夜霓虹</div><div class="tpl-feat">暗夜 → 霓虹粉紅濾鏡，基底版型</div><div class="tpl-day">Day % 8 = 1</div></div></div>
+    <div class="tpl-card"><div class="tpl-color tpl-G3"></div><div class="tpl-info"><div class="tpl-id">image_G3</div><div class="tpl-name">落日橙紅</div><div class="tpl-feat">深紅 → 橙紅。S3 黃色 420px 巨型數字 + S4 卡片步驟 + S6 左對齊大引號</div><div class="tpl-day">Day % 8 = 2</div></div></div>
+    <div class="tpl-card"><div class="tpl-color tpl-G4"></div><div class="tpl-info"><div class="tpl-id">image_G4</div><div class="tpl-name">薄霧晨光</div><div class="tpl-feat">深灰 → 淺灰。S4 卡片步驟 + S5 列表改 → 箭頭風格</div><div class="tpl-day">Day % 8 = 3</div></div></div>
+    <div class="tpl-card"><div class="tpl-color tpl-G5"></div><div class="tpl-info"><div class="tpl-id">image_G5</div><div class="tpl-name">紫羅蘭夜</div><div class="tpl-feat">黑紫 → 亮紫。S2 大字嗆聲（punchline 150px 主視覺）+ S5 三點放大</div><div class="tpl-day">Day % 8 = 4</div></div></div>
+    <div class="tpl-card"><div class="tpl-color tpl-G6"></div><div class="tpl-info"><div class="tpl-id">image_G6</div><div class="tpl-name">苔綠書房</div><div class="tpl-feat">深綠 → 苔綠。S2 純垂直故事 + S4 卡片步驟放大版</div><div class="tpl-day">Day % 8 = 5</div></div></div>
+    <div class="tpl-card"><div class="tpl-color tpl-G7"></div><div class="tpl-info"><div class="tpl-id">image_G7</div><div class="tpl-name">玫瑰金</div><div class="tpl-feat">深紫 → 玫瑰金。S2 問題清單（大問號 360px + 主問句）</div><div class="tpl-day">Day % 8 = 6</div></div></div>
+    <div class="tpl-card"><div class="tpl-color tpl-G8"></div><div class="tpl-info"><div class="tpl-id">image_G8</div><div class="tpl-name">鈷藍工業</div><div class="tpl-feat">夜藍 → 鈷藍。S3 數字衝擊 680px 全屏巨型黃字</div><div class="tpl-day">Day % 8 = 7</div></div></div>
+  </div>
+</section>
+
+<!-- ===== 9 業務員 ===== -->
+<section class="section">
+  <div class="eyebrow">TEAM CASES · 9 MEMBERS</div>
+  <h2>F 軸 9 位真實業務員<br><em>hero shot 真人照片</em></h2>
+  <div class="lead">每位業務員都從招募說明會 PDF 萃取真實故事 + 照片上傳到 GitHub。F 軸文章 S1 封面用本人照（hero shot），第一人稱「我帶過的 XXX」書右視角。</div>
+  <div class="members-grid">
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/team_members/hzw.jpg"></div><div class="name">胡政威</div><div class="role">業務主任 · 22 歲入行</div><div class="point">餐飲主管+外送員<br>→ 年薪 200 萬</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/team_members/wcw.jpg"></div><div class="name">吳昌偉</div><div class="role">業務主任 · 24 歲入行</div><div class="point">三商美邦同業 40 萬<br>→ 9 個月破百</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/team_members/gjm.jpg"></div><div class="name">郭潔梅</div><div class="role">業務主任 · 21 歲入行</div><div class="point">百貨櫃姐<br>→ 一年帶家人出國 3 次</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/team_members/xfy.jpg"></div><div class="name">蕭方宜</div><div class="role">業務襄理 · 23 歲入行</div><div class="point">寄養家庭出身<br>→ 年薪百萬有房</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/team_members/xjy.jpg"></div><div class="name">謝佳育</div><div class="role">業務經理 · 22 歲入行</div><div class="point">在校學生怕開口<br>→ 年收破百</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/team_members/nsl.jpg"></div><div class="name">倪順良</div><div class="role">業務經理 · 22 歲入行</div><div class="point">餐飲/超商/工廠<br>→ 年薪近 300 萬</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/team_members/hkx.jpg"></div><div class="name">胡可馨</div><div class="role">業務經理 · 20 歲入行</div><div class="point">入行負債 600 萬<br>→ 26 歲置產 2000 萬</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/team_members/gxy.jpg"></div><div class="name">高薪祐</div><div class="role">業務經理 · 21 歲入行</div><div class="point">前 3 個月只 2,500 元<br>→ 23 歲業務經理</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/team_members/lbh.jpg"></div><div class="name">賴碧凰</div><div class="role">業務經理 · 25 歲入行</div><div class="point">蝦皮行銷月薪 2.8 萬<br>→ 開 200 萬的車</div></div>
+  </div>
+</section>
+
+<!-- ===== 撈題演算法 ===== -->
+<section class="section algo-bg">
+  <div class="eyebrow">SCHEDULING ALGORITHM</div>
+  <h2>每天撈題的<br><em>雙軸平衡演算法</em></h2>
+  <div class="lead">雙層優先級 + 雙軸赤字計分，確保每月 30 篇按比例分配，且最久沒用的 seed 優先被撈。</div>
+
+  <div class="algo-flow">
+
+    <div class="algo-card">
+      <h4>📋 撈題優先級（兩層）</h4>
+      <ol>
+        <li><strong>scheduled FIFO</strong>：你 Discord 🟡 排明天的條目，先丟先發，<code>status=used</code> 一次性消耗</li>
+        <li><strong>normal 雙軸平衡</strong>：PDF seed + 🟢 存進的條目，循環使用不消耗</li>
+      </ol>
+    </div>
+
+    <div class="algo-card">
+      <h4>⚖️ 雙軸計分（normal）</h4>
+      <ol>
+        <li>算每軸本月已用幾篇 → 跟配額比 → 算赤字</li>
+        <li>主軸赤字最大的優先（A 13 / B 5 / C 3 / D 5 / E 3 / F 5）</li>
+        <li>副軸赤字次之（F1 11 / F2 9 / F3 7 / F4 3）</li>
+        <li>同分時 <code>last_used_at NULLS FIRST ASC</code>（最久沒用的優先）</li>
+      </ol>
+    </div>
+
+    <div class="algo-card">
+      <h4>🔄 永遠不會「發完」</h4>
+      <ol>
+        <li>normal 條目用完不消耗，只更新 <code>last_used_at</code></li>
+        <li>13 條 F seed → 約 2.5 個月跑完一輪</li>
+        <li>第 2 輪同 seed 被撈 → AI 重新生 caption + 33 slot，<strong>內容不重複</strong></li>
+        <li>故事核心不變但寫法變化（hook、段落、CTA、版型色感都不同）</li>
+      </ol>
+    </div>
+
+    <div class="algo-card">
+      <h4>🆕 新增 seed 的入口</h4>
+      <ol>
+        <li>Discord「<strong>ig｜文案寶藏庫</strong>」頻道丟訊息/圖/PDF</li>
+        <li>Bot Haiku 4.5 自動分析（圖/PDF 升 Sonnet 4.6 視覺）</li>
+        <li>回 8 欄位預覽 → reply 1 存 / reply 2 排明天 / reply 4 修</li>
+        <li>進靈感庫後加入循環</li>
+      </ol>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== 系統規格 ===== -->
+<section class="section specs">
+  <div class="eyebrow">INFRASTRUCTURE</div>
+  <h2>系統規格<br><em>單一 workflow 完成所有事</em></h2>
+  <div class="lead">全部跑在自己的 Synology + Mac Mini 上，沒有第三方 SaaS 訂閱。</div>
+  <div class="spec-grid">
+    <div class="spec-card"><div class="num">127</div><div class="label">n8n 節點<br>單一 workflow</div></div>
+    <div class="spec-card"><div class="num">8</div><div class="label">Phase<br>從生草稿到月清</div></div>
+    <div class="spec-card"><div class="num">72</div><div class="label">靈感庫 seed<br>循環不消耗</div></div>
+    <div class="spec-card"><div class="num">30</div><div class="label">月配額<br>每天 1 篇</div></div>
+    <div class="spec-card"><div class="num">3</div><div class="label">合規層<br>規則+語意+AI</div></div>
+    <div class="spec-card"><div class="num">7</div><div class="label">Carousel 張<br>每篇標準產出</div></div>
+    <div class="spec-card"><div class="num">2</div><div class="label">Claude 模型<br>Haiku + Sonnet</div></div>
+    <div class="spec-card"><div class="num">~50</div><div class="label">月成本（NTD）<br>含所有 AI 費用</div></div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <div class="docs">
+    <a href="系統介紹.html">系統介紹（行銷風）</a>
+    <a href="系統架構與運維手冊.md">系統架構與運維手冊</a>
+    <a href="主題分類綱要.md">主題分類綱要</a>
+    <a href="靈感庫架構.md">靈感庫架構</a>
+    <a href="系統升級紀錄_2026-05-05.md">2026-05-05 紀錄</a>
+  </div>
+  <div class="small">
+    Workflow ID：Sw19kJzQhuvZV0ig<br>
+    DataTable：jYGffKsbbrXOqsTe（靈感庫）/ jnmc2VEsZOZ9DdEz（版型）/ i4UGuYcMDz7gL1MK（草稿）<br>
+    Updated 2026-05-05
+  </div>
+</footer>
+
+</body>
+</html>
