@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>IG 輪播 G6 苔綠書房</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0a; font-family: "Noto Serif TC", serif; min-height: 100vh; padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 24px; justify-content: flex-start; }
+  .slide-counter { color: #fff; font-family: "Playfair Display", serif; font-size: 24px; }
+  .nav-row { display: flex; gap: 12px; }
+  .slide { width: 1080px; height: 1350px; position: relative; overflow: hidden; color: #fff; display: flex; flex-direction: column; }
+  .slide.active { display: flex; }
+  .bg { position: absolute; inset: 0; background-size: cover; background-position: center; z-index: 0; filter: grayscale(1) contrast(1.1); }
+  .duo { position: absolute; inset: 0; mix-blend-mode: screen; z-index: 1; background: linear-gradient(135deg, #1B3A1B 0%, #8FBC8F 100%); }
+  .overlay { position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.55) 100%); }
+  .inner { position: relative; z-index: 3; flex: 1; display: flex; flex-direction: column; padding: 80px 72px; }
+
+  /* S1 封面 */
+  .s1 .bg { background-image: url('https://images.pexels.com/photos/4386370/pexels-photo-4386370.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'); }
+  .s1 .overlay { background: linear-gradient(180deg, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.5) 100%); }
+  .s1 .inner { justify-content: center; align-items: center; text-align: center; gap: 36px; }
+  .s1 .meta { font-family: "Playfair Display", serif; letter-spacing: 12px; font-size: 36px; text-transform: uppercase; color: #F4E869; }
+  .s1 h1 { font-size: 150px; line-height: 1.18; font-weight: 700; letter-spacing: 1px; }
+  .s1 h1 em { font-style: normal; color: #F4E869; }
+  .s1 .desc { font-size: 50px; line-height: 1.7; color: rgba(255,255,255,0.86); }
+
+  /* S2 故事/引言 */
+  .s2 .bg { background-image: url('https://images.pexels.com/photos/164527/pexels-photo-164527.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'); }
+  .s2 .overlay { background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%); }
+  .s2 .inner { justify-content: center; align-items: center; text-align: center; gap: 32px; padding: 80px 60px; }
+  .s2 .eyebrow { letter-spacing: 12px; font-family: "Playfair Display", serif; font-size: 36px; text-transform: uppercase; color: #F4E869; font-weight: 700; }
+  .s2 .quote-mark { font-family: "Playfair Display", serif; font-size: 200px; color: #F4E869; line-height: 0.5; opacity: 0.5; text-align: center; }
+  .s2 .quote { font-size: 38px; line-height: 1.5; font-weight: 500; max-width: 920px; }
+  .s2 .quote em { font-style: normal; color: #F4E869; }
+  .s2 .rule { width: 140px; height: 5px; background: #F4E869; margin: 12px auto; }
+  .s2 .punchline { font-size: 50px; line-height: 1.45; font-weight: 700; color: #F4E869; max-width: 880px; }
+
+  /* S3 大數字 */
+  .s3 .bg { background-image: url('https://images.pexels.com/photos/210607/pexels-photo-210607.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'); }
+  .s3 .overlay { background: linear-gradient(180deg, rgba(0,0,0,0.32) 0%, rgba(0,0,0,0.62) 100%); }
+  .s3 .inner { justify-content: center; gap: 32px; }
+  .s3 .eyebrow { letter-spacing: 8px; font-family: "Playfair Display", serif; font-size: 28px; text-transform: uppercase; color: #F4E869; }
+  .s3 .num-row { display: flex; align-items: baseline; gap: 18px; }
+  .s3 .num { font-family: "Playfair Display", serif; font-size: 300px; line-height: 0.95; color: #fff; font-weight: 800; letter-spacing: -8px; }
+  .s3 .unit { font-family: "Playfair Display", serif; font-size: 100px; color: #F4E869; font-weight: 700; }
+  .s3 .title { font-size: 72px; line-height: 1.3; font-weight: 700; }
+  .s3 .body { font-size: 28px; line-height: 1.7; color: rgba(255,255,255,0.88); }
+
+  /* S4 步驟 */
+  .s4 .bg { background-image: url('https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'); }
+  .s4 .overlay { background: linear-gradient(180deg, rgba(0,0,0,0.32) 0%, rgba(0,0,0,0.62) 100%); }
+  .s4 .inner { justify-content: center; gap: 24px; }
+  .s4 .eyebrow { letter-spacing: 8px; font-family: "Playfair Display", serif; font-size: 28px; text-transform: uppercase; color: #F4E869; }
+  .s4 .head { font-size: 60px; line-height: 1.3; font-weight: 700; margin-bottom: 12px; }
+  .s4 .step { display: flex; gap: 26px; align-items: flex-start; padding: 26px 30px; margin-bottom: 14px; background: rgba(255,255,255,0.1); border-left: 6px solid #F4E869; border-radius: 14px; }
+  .s4 .step:last-child { margin-bottom: 0; }
+  .s4 .step .n { font-family: "Playfair Display", serif; color: #F4E869; font-size: 64px; min-width: 92px; line-height: 1; font-weight: 700; }
+  .s4 .step .body-col { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .s4 .step .step-name { font-size: 38px; font-weight: 700; line-height: 1.4; }
+  .s4 .step .step-desc { font-size: 24px; color: rgba(255,255,255,0.82); line-height: 1.55; }
+
+  /* S5 列表 */
+  .s5 .bg { background-image: url('https://images.pexels.com/photos/5439144/pexels-photo-5439144.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'); }
+  .s5 .overlay { background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.62) 100%); }
+  .s5 .inner { justify-content: center; gap: 24px; }
+  .s5 .eyebrow { letter-spacing: 8px; font-family: "Playfair Display", serif; font-size: 28px; text-transform: uppercase; color: #F4E869; }
+  .s5 .head { font-size: 44px; line-height: 1.3; font-weight: 700; margin-bottom: 16px; }
+  .s5 .item { display: flex; gap: 32px; align-items: flex-start; padding: 28px 0; border-top: 1px solid rgba(255,255,255,0.32); }
+  .s5 .item:last-child { border-bottom: 1px solid rgba(255,255,255,0.32); }
+  .s5 .item .n { font-family: "Playfair Display", serif; color: #F4E869; font-size: 60px; min-width: 84px; line-height: 1; font-weight: 700; }
+  .s5 .item .t { font-size: 28px; line-height: 1.55; }
+
+  /* S6 金句 */
+  .s6 .bg { background-image: url('https://images.pexels.com/photos/1602726/pexels-photo-1602726.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'); }
+  .s6 .overlay { background: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.65) 100%); }
+  .s6 .inner { justify-content: center; align-items: center; text-align: center; gap: 36px; padding: 80px 88px; }
+  .s6 .quote-mark { font-family: "Playfair Display", serif; font-size: 240px; color: #F4E869; line-height: 0.5; opacity: 0.6; }
+  .s6 .quote { font-size: 72px; line-height: 1.5; font-weight: 600; }
+  .s6 .quote em { font-style: normal; color: #F4E869; }
+  .s6 .rule { width: 100px; height: 4px; background: #F4E869; margin: 16px auto; }
+  .s6 .attribution { font-family: "Playfair Display", serif; font-size: 32px; color: rgba(255,255,255,0.78); letter-spacing: 4px; }
+
+  /* S7 CTA */
+  .s7 .bg { background-image: url('https://images.pexels.com/photos/3760323/pexels-photo-3760323.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'); }
+  .s7 .overlay { background: linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.4) 45%, rgba(0,0,0,0.78) 100%); }
+  .s7 .topbar { position: absolute; top: 0; left: 0; right: 0; height: 8px; background: #F4E869; z-index: 4; }
+  .s7 .inner { justify-content: flex-end; align-items: center; text-align: center; gap: 28px; padding-bottom: 90px; }
+  .s7 .q { font-size: 56px; line-height: 1.5; text-shadow: 0 4px 16px rgba(0,0,0,0.5); }
+  .s7 .keyword { font-family: "Playfair Display", serif; font-size: 220px; color: #F4E869; font-weight: 800; line-height: 1; letter-spacing: -6px; text-shadow: 0 6px 32px rgba(0,0,0,0.55); }
+  .s7 .desc { font-size: 38px; line-height: 1.65; color: rgba(255,255,255,0.95); text-shadow: 0 2px 12px rgba(0,0,0,0.5); }
+  .s7 .handle { margin-top: 16px; font-family: "Playfair Display", serif; font-size: 36px; color: rgba(255,255,255,0.85); text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+
+  body { zoom: 0.55 !important; display: grid !important; grid-template-columns: repeat(2, 1080px) !important; gap: 32px !important; padding: 40px !important; justify-content: center !important; align-items: start !important; }
+  body > div:first-child { grid-column: 1 / -1; }
+  .slide { margin-bottom: 0 !important; display: flex !important; }
+</style>
+</head>
+<body>
+<div style="text-align:center; padding:36px; color:#F4E869; font-family:'Playfair Display',serif; font-size:32px; letter-spacing:6px;">D 軸 Demo ｜ 通膨陷阱（image_G6 苔綠書房）</div>
+  <div class="slide s1 active">
+    <div class="bg"></div><div class="duo"></div><div class="overlay"></div>
+    <div class="inner">
+      <div class="meta">WEALTH GAP · 2026</div>
+      <h1>努力存錢<br><em>追不上漲價</em></h1>
+      <div class="desc">你存錢的速度，永遠輸給通膨速度<br>不是你不努力，是時代遊戲規則變了</div>
+    </div>
+  </div>
+
+  <div class="slide s2">
+    <div class="bg"></div><div class="duo"></div><div class="overlay"></div>
+    <div class="inner">
+      <div class="eyebrow">HARD TRUTH</div>
+      <div class="quote-mark">"</div>
+      <div class="quote">30 年前 3 萬塊買得起房，<em>現在 3 萬只夠付台北小套房一個月房租</em>。同一個薪水數字，買得起的東西差 100 倍。</div>
+      <div class="rule"></div>
+      <div class="punchline">通膨不是天災，是現代人必須面對的常態。</div>
+    </div>
+  </div>
+
+  <div class="slide s3">
+    <div class="bg"></div><div class="duo"></div><div class="overlay"></div>
+    <div class="inner">
+      <div class="eyebrow">REALITY CHECK</div>
+      <div class="num-row">
+        <div class="num">50</div>
+        <div class="unit">%</div>
+      </div>
+      <div class="title">30 年購買力縮一半</div>
+      <div class="body">通膨年率 2-3%，30 年累積 50% 購買力流失。意思是現在 100 萬，購買力等同 30 年前 50 萬。但薪資沒跟著翻倍。</div>
+    </div>
+  </div>
+
+  <div class="slide s4">
+    <div class="bg"></div><div class="duo"></div><div class="overlay"></div>
+    <div class="inner">
+      <div class="eyebrow">3 STEPS</div>
+      <div class="head">對抗通膨的 3 個方向</div>
+      <div class="step"><div class="n">01</div><div class="body-col"><div class="step-name">重檢收入結構</div><div class="step-desc">單一收入無法對抗通膨，要有第二甚至第三條收入線</div></div></div>
+      <div class="step"><div class="n">02</div><div class="body-col"><div class="step-name">投資對抗通膨資產</div><div class="step-desc">不是存款，是會跟著通膨成長的資產（房產/股票/被動收入）</div></div></div>
+      <div class="step"><div class="n">03</div><div class="body-col"><div class="step-name">提早規劃退休</div><div class="step-desc">不是 50 歲才開始算，是 30 歲開始算</div></div></div>
+    </div>
+  </div>
+
+  <div class="slide s5">
+    <div class="bg"></div><div class="duo"></div><div class="overlay"></div>
+    <div class="inner">
+      <div class="eyebrow">KEY POINTS</div>
+      <div class="head">為什麼 80% 的人會被通膨追上</div>
+      <div class="item"><div class="n">01</div><div class="t">收入靠單一薪資，跟不上通膨速度</div></div>
+      <div class="item"><div class="n">02</div><div class="t">把錢存銀行，等於每年虧 2-3% 購買力</div></div>
+      <div class="item"><div class="n">03</div><div class="t">沒退休規劃，年紀大才發現缺口太大</div></div>
+    </div>
+  </div>
+
+  <div class="slide s6">
+    <div class="bg"></div><div class="duo"></div><div class="overlay"></div>
+    <div class="inner">
+      <div class="quote-mark">"</div>
+      <div class="quote">不對抗通膨<br><em>就是對抗你自己</em></div>
+      <div class="rule"></div>
+      <div class="attribution">@shuyou_lin</div>
+    </div>
+  </div>
+
+  <div class="slide s7">
+    <div class="bg"></div><div class="duo"></div><div class="overlay"></div><div class="topbar"></div>
+    <div class="inner">
+      <div class="q">想知道你的收入能不能撐到退休<br>我傳你 3 步驟試算表</div>
+      <div class="keyword">試算</div>
+      <div class="desc">在貼文下方留言「試算」<br>我傳你檢核收入是否追得上通膨</div>
+      <div class="handle">@shuyou_lin</div>
+    </div>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const labels = ['S1 封面', 'S2 引言', 'S3 大數字', 'S4 三步驟', 'S5 三點', 'S6 金句', 'S7 CTA'];
+  document.querySelectorAll('.slide').forEach(function(slide, i) {
+    const lbl = document.createElement('div');
+    lbl.style.cssText = 'position:absolute; top:16px; left:16px; z-index:9999; background:rgba(0,0,0,0.85); color:#F4E869; font-family:Playfair Display,serif; font-size:48px; letter-spacing:3px; padding:14px 24px; border-radius:8px; font-weight:800; border:3px solid #F4E869;';
+    lbl.textContent = labels[i] || ('S' + (i+1));
+    slide.appendChild(lbl);
+  });
+});
+</script>
+
+</body>
+</html>
