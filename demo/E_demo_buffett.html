@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>IG 輪播 G6 苔綠書房</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0a; font-family: "Noto Serif TC", serif; min-height: 100vh; padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 24px; justify-content: flex-start; }
+  .slide-counter { color: #fff; font-family: "Playfair Display", serif; font-size: 24px; }
+  .nav-row { display: flex; gap: 12px; }
+  .slide { width: 1080px; height: 1350px; position: relative; overflow: hidden; color: #fff; display: flex; flex-direction: column; }
+  .slide.active { display: flex; }
+  .bg { position: absolute; inset: 0; background-size: cover; background-position: center; z-index: 0; filter: grayscale(1) contrast(1.1); }
+  .duo { position: absolute; inset: 0; mix-blend-mode: screen; z-index: 1; background: linear-gradient(135deg, #1B3A1B 0%, #8FBC8F 100%); }
+  .overlay { position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.55) 100%); }
+  .inner { position: relative; z-index: 3; flex: 1; display: flex; flex-direction: column; padding: 80px 72px; }
+
+  /* S1 封面 */
+  .s1 .bg { background-image: url('https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'); }
+  .s1 .overlay { background: linear-gradient(180deg, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.5) 100%); }
+  .s1 .inner { justify-content: center; align-items: center; text-align: center; gap: 36px; }
+  .s1 .meta { font-family: "Playfair Display", serif; letter-spacing: 12px; font-size: 36px; text-transform: uppercase; color: #F4E869; }
+  .s1 h1 { font-size: 150px; line-height: 1.18; font-weight: 700; letter-spacing: 1px; }
+  .s1 h1 em { font-style: normal; color: #F4E869; }
+  .s1 .desc { font-size: 50px; line-height: 1.7; color: rgba(255,255,255,0.86); }
+
+  /* S2 故事/引言 */
+  .s2 .bg { background-image: url('https://images.pexels.com/photos/2422280/pexels-photo-2422280.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'); }
+  .s2 .overlay { background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%); }
+  .s2 .inner { justify-content: center; align-items: center; text-align: center; gap: 32px; padding: 80px 60px; }
+  .s2 .eyebrow { letter-spacing: 12px; font-family: "Playfair Display", serif; font-size: 36px; text-transform: uppercase; color: #F4E869; font-weight: 700; }
+  .s2 .quote-mark { font-family: "Playfair Display", serif; font-size: 200px; color: #F4E869; line-height: 0.5; opacity: 0.5; text-align: center; }
+  .s2 .quote { font-size: 38px; line-height: 1.5; font-weight: 500; max-width: 920px; }
+  .s2 .quote em { font-style: normal; color: #F4E869; }
+  .s2 .rule { width: 140px; height: 5px; background: #F4E869; margin: 12px auto; }
+  .s2 .punchline { font-size: 50px; line-height: 1.45; font-weight: 700; color: #F4E869; max-width: 880px; }
+
+  /* S3 大數字 */
+  .s3 .bg { background-image: url('https://images.pexels.com/photos/4386339/pexels-photo-4386339.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'); }
+  .s3 .overlay { background: linear-gradient(180deg, rgba(0,0,0,0.32) 0%, rgba(0,0,0,0.62) 100%); }
+  .s3 .inner { justify-content: center; gap: 32px; }
+  .s3 .eyebrow { letter-spacing: 8px; font-family: "Playfair Display", serif; font-size: 28px; text-transform: uppercase; color: #F4E869; }
+  .s3 .num-row { display: flex; align-items: baseline; gap: 18px; }
+  .s3 .num { font-family: "Playfair Display", serif; font-size: 300px; line-height: 0.95; color: #fff; font-weight: 800; letter-spacing: -8px; }
+  .s3 .unit { font-family: "Playfair Display", serif; font-size: 100px; color: #F4E869; font-weight: 700; }
+  .s3 .title { font-size: 72px; line-height: 1.3; font-weight: 700; }
+  .s3 .body { font-size: 28px; line-height: 1.7; color: rgba(255,255,255,0.88); }
+
+  /* S4 步驟 */
+  .s4 .bg { background-image: url('https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'); }
+  .s4 .overlay { background: linear-gradient(180deg, rgba(0,0,0,0.32) 0%, rgba(0,0,0,0.62) 100%); }
+  .s4 .inner { justify-content: center; gap: 24px; }
+  .s4 .eyebrow { letter-spacing: 8px; font-family: "Playfair Display", serif; font-size: 28px; text-transform: uppercase; color: #F4E869; }
+  .s4 .head { font-size: 60px; line-height: 1.3; font-weight: 700; margin-bottom: 12px; }
+  .s4 .step { display: flex; gap: 26px; align-items: flex-start; padding: 26px 30px; margin-bottom: 14px; background: rgba(255,255,255,0.1); border-left: 6px solid #F4E869; border-radius: 14px; }
+  .s4 .step:last-child { margin-bottom: 0; }
+  .s4 .step .n { font-family: "Playfair Display", serif; color: #F4E869; font-size: 64px; min-width: 92px; line-height: 1; font-weight: 700; }
+  .s4 .step .body-col { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .s4 .step .step-name { font-size: 38px; font-weight: 700; line-height: 1.4; }
+  .s4 .step .step-desc { font-size: 24px; color: rgba(255,255,255,0.82); line-height: 1.55; }
+
+  /* S5 列表 */
+  .s5 .bg { background-image: url('https://images.pexels.com/photos/1647962/pexels-photo-1647962.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'); }
+  .s5 .overlay { background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.62) 100%); }
+  .s5 .inner { justify-content: center; gap: 24px; }
+  .s5 .eyebrow { letter-spacing: 8px; font-family: "Playfair Display", serif; font-size: 28px; text-transform: uppercase; color: #F4E869; }
+  .s5 .head { font-size: 44px; line-height: 1.3; font-weight: 700; margin-bottom: 16px; }
+  .s5 .item { display: flex; gap: 32px; align-items: flex-start; padding: 28px 0; border-top: 1px solid rgba(255,255,255,0.32); }
+  .s5 .item:last-child { border-bottom: 1px solid rgba(255,255,255,0.32); }
+  .s5 .item .n { font-family: "Playfair Display", serif; color: #F4E869; font-size: 60px; min-width: 84px; line-height: 1; font-weight: 700; }
+  .s5 .item .t { font-size: 28px; line-height: 1.55; }
+
+  /* S6 金句 */
+  .s6 .bg { background-image: url('https://images.pexels.com/photos/3184436/pexels-photo-3184436.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'); }
+  .s6 .overlay { background: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.65) 100%); }
+  .s6 .inner { justify-content: center; align-items: center; text-align: center; gap: 36px; padding: 80px 88px; }
+  .s6 .quote-mark { font-family: "Playfair Display", serif; font-size: 240px; color: #F4E869; line-height: 0.5; opacity: 0.6; }
+  .s6 .quote { font-size: 72px; line-height: 1.5; font-weight: 600; }
+  .s6 .quote em { font-style: normal; color: #F4E869; }
+  .s6 .rule { width: 100px; height: 4px; background: #F4E869; margin: 16px auto; }
+  .s6 .attribution { font-family: "Playfair Display", serif; font-size: 32px; color: rgba(255,255,255,0.78); letter-spacing: 4px; }
+
+  /* S7 CTA */
+  .s7 .bg { background-image: url('https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'); }
+  .s7 .overlay { background: linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.4) 45%, rgba(0,0,0,0.78) 100%); }
+  .s7 .topbar { position: absolute; top: 0; left: 0; right: 0; height: 8px; background: #F4E869; z-index: 4; }
+  .s7 .inner { justify-content: flex-end; align-items: center; text-align: center; gap: 28px; padding-bottom: 90px; }
+  .s7 .q { font-size: 56px; line-height: 1.5; text-shadow: 0 4px 16px rgba(0,0,0,0.5); }
+  .s7 .keyword { font-family: "Playfair Display", serif; font-size: 220px; color: #F4E869; font-weight: 800; line-height: 1; letter-spacing: -6px; text-shadow: 0 6px 32px rgba(0,0,0,0.55); }
+  .s7 .desc { font-size: 38px; line-height: 1.65; color: rgba(255,255,255,0.95); text-shadow: 0 2px 12px rgba(0,0,0,0.5); }
+  .s7 .handle { margin-top: 16px; font-family: "Playfair Display", serif; font-size: 36px; color: rgba(255,255,255,0.85); text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+
+  body { zoom: 0.55 !important; display: grid !important; grid-template-columns: repeat(2, 1080px) !important; gap: 32px !important; padding: 40px !important; justify-content: center !important; align-items: start !important; }
+  body > div:first-child { grid-column: 1 / -1; }
+  .slide { margin-bottom: 0 !important; display: flex !important; }
+</style>
+</head>
+<body>
+<div style="text-align:center; padding:36px; color:#F4E869; font-family:'Playfair Display',serif; font-size:32px; letter-spacing:6px;">E 軸 Demo ｜ 巴菲特投資自己（image_G6 苔綠書房）</div>
+  <div class="slide s1 active">
+    <div class="bg"></div><div class="duo"></div><div class="overlay"></div>
+    <div class="inner">
+      <div class="meta">WARREN BUFFETT · QUOTE</div>
+      <h1>太晚開始<br><em>投資自己</em></h1>
+      <div class="desc">巴菲特說：人生最大錯誤是太晚開始投資自己<br>這句話我 25 歲才聽到，你呢</div>
+    </div>
+  </div>
+
+  <div class="slide s2">
+    <div class="bg"></div><div class="duo"></div><div class="overlay"></div>
+    <div class="inner">
+      <div class="eyebrow">BUFFETT'S WORDS</div>
+      <div class="quote-mark">"</div>
+      <div class="quote">巴菲特原句：「The most important investment you can make is in yourself.」<em>所有外部投資的報酬率，都打不過投資自己</em>。</div>
+      <div class="rule"></div>
+      <div class="punchline">25 歲我才聽到這句，你還來得及。</div>
+    </div>
+  </div>
+
+  <div class="slide s3">
+    <div class="bg"></div><div class="duo"></div><div class="overlay"></div>
+    <div class="inner">
+      <div class="eyebrow">COMPOUND INTEREST</div>
+      <div class="num-row">
+        <div class="num">285</div>
+        <div class="unit">%</div>
+      </div>
+      <div class="title">投資自己的複利上限</div>
+      <div class="body">股票年化 8%、房地產 6%、定存 1%。但 1 個關鍵技能可以讓你薪水從 35K 跳到 100K，那是 285% 報酬。投資自己沒有上限。</div>
+    </div>
+  </div>
+
+  <div class="slide s4">
+    <div class="bg"></div><div class="duo"></div><div class="overlay"></div>
+    <div class="inner">
+      <div class="eyebrow">3 INVESTMENTS</div>
+      <div class="head">巴菲特說的 3 種「投資自己」</div>
+      <div class="step"><div class="n">01</div><div class="body-col"><div class="step-name">健康</div><div class="step-desc">沒有健康，所有投資都歸零。每天 30 分運動是基本盤</div></div></div>
+      <div class="step"><div class="n">02</div><div class="body-col"><div class="step-name">技能</div><div class="step-desc">持續學習能直接換錢的技能（銷售、表達、領導、財務）</div></div></div>
+      <div class="step"><div class="n">03</div><div class="body-col"><div class="step-name">人脈</div><div class="step-desc">跟比你強的人靠近，他們的習慣會傳染給你</div></div></div>
+    </div>
+  </div>
+
+  <div class="slide s5">
+    <div class="bg"></div><div class="duo"></div><div class="overlay"></div>
+    <div class="inner">
+      <div class="eyebrow">WHY IT MATTERS</div>
+      <div class="head">為什麼投資自己永遠贏</div>
+      <div class="item"><div class="n">01</div><div class="t">報酬率沒有上限（股票 10%、技能 1000% 都可能）</div></div>
+      <div class="item"><div class="n">02</div><div class="t">不會被通膨稀釋，你的能力會跟著時代升級</div></div>
+      <div class="item"><div class="n">03</div><div class="t">別人偷不走，房子可能被沒收，技能不會</div></div>
+    </div>
+  </div>
+
+  <div class="slide s6">
+    <div class="bg"></div><div class="duo"></div><div class="overlay"></div>
+    <div class="inner">
+      <div class="quote-mark">"</div>
+      <div class="quote">投資自己<br><em>是唯一不會虧本的投資</em></div>
+      <div class="rule"></div>
+      <div class="attribution">@shuyou_lin</div>
+    </div>
+  </div>
+
+  <div class="slide s7">
+    <div class="bg"></div><div class="duo"></div><div class="overlay"></div><div class="topbar"></div>
+    <div class="inner">
+      <div class="q">想知道我這 8 年怎麼投資自己<br>那 3 個關鍵動作讓我從 35K 到處經理</div>
+      <div class="keyword">投資自己</div>
+      <div class="desc">在貼文下方留言「投資自己」<br>我傳你那 3 個落地方法</div>
+      <div class="handle">@shuyou_lin</div>
+    </div>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const labels = ['S1 封面', 'S2 引言', 'S3 大數字', 'S4 三步驟', 'S5 三點', 'S6 金句', 'S7 CTA'];
+  document.querySelectorAll('.slide').forEach(function(slide, i) {
+    const lbl = document.createElement('div');
+    lbl.style.cssText = 'position:absolute; top:16px; left:16px; z-index:9999; background:rgba(0,0,0,0.85); color:#F4E869; font-family:Playfair Display,serif; font-size:48px; letter-spacing:3px; padding:14px 24px; border-radius:8px; font-weight:800; border:3px solid #F4E869;';
+    lbl.textContent = labels[i] || ('S' + (i+1));
+    slide.appendChild(lbl);
+  });
+});
+</script>
+
+</body>
+</html>
