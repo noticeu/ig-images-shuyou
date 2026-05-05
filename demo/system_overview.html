@@ -34,7 +34,7 @@
 
   /* ======= 數字概覽（Hero 下方）======= */
   .quick-stats { background: #fff; border-bottom: 1px solid #E8E4DC; }
-  .quick-stats .grid { max-width: 1320px; margin: 0 auto; padding: 40px 32px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 24px; }
+  .quick-stats .grid { max-width: 1320px; margin: 0 auto; padding: 40px 32px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 18px; }
   .quick-stats .stat { text-align: center; }
   .quick-stats .stat .num { font-family: "Playfair Display", serif; font-size: 56px; font-weight: 800; color: #3D5A46; line-height: 1; }
   .quick-stats .stat .label { font-size: 16px; color: #5A6B5F; margin-top: 10px; letter-spacing: 1px; }
@@ -159,7 +159,8 @@
     <div class="stat"><div class="num">4</div><div class="label">副軸</div></div>
     <div class="stat"><div class="num">8</div><div class="label">版型</div></div>
     <div class="stat"><div class="num">9</div><div class="label">業務員 case</div></div>
-    <div class="stat"><div class="num">72</div><div class="label">靈感庫 seed</div></div>
+    <div class="stat"><div class="num">25</div><div class="label">名人 hero shot</div></div>
+    <div class="stat"><div class="num">151</div><div class="label">靈感庫 seed</div></div>
     <div class="stat"><div class="num">127</div><div class="label">n8n 節點</div></div>
   </div>
 </section>
@@ -244,11 +245,11 @@
         <div class="right">
           <div class="pct">10%</div>
           <div class="quota">月 3 篇</div>
-          <div class="seed">6 條 seed</div>
+          <div class="seed">85 條 seed</div>
         </div>
       </div>
       <div class="bar-track"><div class="bar-fill" style="width:10%"></div></div>
-      <div class="desc">E1 商業 / E2 人生。巴菲特、稻盛和夫、Jim Rohn、Goethe 等經典金句加書右解讀。</div>
+      <div class="desc">E1 商業 / E2 人生。25 位名人 × 平均 3-4 條金句。每條配 Wikipedia public domain 名人照片當 hero shot。涵蓋巴菲特、賈伯斯、稻盛和夫、馬斯克、查理芒格、Tony Robbins、Jim Rohn、Goethe、Marcus Aurelius 等。</div>
     </div>
 
     <div class="axis-row">
@@ -332,6 +333,40 @@
     <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/team_members/hkx.jpg"></div><div class="name">胡可馨</div><div class="role">業務經理 · 20 歲入行</div><div class="point">入行負債 600 萬<br>→ 26 歲置產 2000 萬</div></div>
     <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/team_members/gxy.jpg"></div><div class="name">高薪祐</div><div class="role">業務經理 · 21 歲入行</div><div class="point">前 3 個月只 2,500 元<br>→ 23 歲業務經理</div></div>
     <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/team_members/lbh.jpg"></div><div class="name">賴碧凰</div><div class="role">業務經理 · 25 歲入行</div><div class="point">蝦皮行銷月薪 2.8 萬<br>→ 開 200 萬的車</div></div>
+  </div>
+</section>
+
+<!-- ===== 25 名人 ===== -->
+<section class="section">
+  <div class="eyebrow">E-AXIS · 25 CELEBRITIES</div>
+  <h2>E 軸 25 位名人<br><em>每位 hero shot 真人照</em></h2>
+  <div class="lead">每條 E 軸 seed 都配名人本人照（Wikipedia public domain），S1 封面用 hero shot 機制。85 條金句 seed 約 3 年才循環一輪，未來不會看到重複。</div>
+  <div class="members-grid" style="grid-template-columns: repeat(5, 1fr); gap: 16px;">
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/buffett.jpg"></div><div class="name">巴菲特</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/munger.jpg"></div><div class="name">查理·芒格</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/jobs.jpg"></div><div class="name">賈伯斯</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/gates.jpg"></div><div class="name">比爾·蓋茲</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/musk.jpg"></div><div class="name">馬斯克</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/bezos.jpg"></div><div class="name">貝佐斯</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/drucker.jpg"></div><div class="name">彼得·杜拉克</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/dalio.jpg"></div><div class="name">Ray Dalio</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/inamori.jpg"></div><div class="name">稻盛和夫</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/matsushita.jpg"></div><div class="name">松下幸之助</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/honda.jpg"></div><div class="name">本田宗一郎</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/morris.jpg"></div><div class="name">張忠謀</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/jackma.jpg"></div><div class="name">馬雲</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/hill.jpg"></div><div class="name">拿破崙·希爾</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/carnegie.jpg"></div><div class="name">戴爾·卡內基</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/ziglar.jpg"></div><div class="name">Zig Ziglar</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/tracy.jpg"></div><div class="name">Brian Tracy</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/rohn.jpg"></div><div class="name">Jim Rohn</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/robbins.jpg"></div><div class="name">Tony Robbins</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/maxwell.jpg"></div><div class="name">John Maxwell</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/covey.jpg"></div><div class="name">Stephen Covey</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/sinek.jpg"></div><div class="name">Simon Sinek</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/goethe.jpg"></div><div class="name">Goethe</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/aurelius.jpg"></div><div class="name">Marcus Aurelius</div></div>
+    <div class="member-card"><div class="photo"><img src="https://raw.githubusercontent.com/noticeu/ig-images-shuyou/main/quotes/ware.jpg"></div><div class="name">Bronnie Ware</div></div>
   </div>
 </section>
 
